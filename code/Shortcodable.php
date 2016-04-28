@@ -24,8 +24,12 @@ class Shortcodable extends SS_Object
             if (!singleton($class)->hasMethod('parse_shortcode')) {
                 user_error("Failed to register \"$class\" with shortcodable. $class must have the method parse_shortcode(). See /shortcodable/README.md", E_USER_ERROR);
             }
-            ShortcodeParser::get('default')->register($class, array($class, 'parse_shortcode'));
-            singleton('ShortcodableParser')->register($class);
+            $kw = $class;
+            if (singleton($class)->hasMethod('getShortcodeKeyword')) {
+                $kw = singleton($class)->getShortcodeKeyword();
+            }
+            ShortcodeParser::get('default')->register($kw, array($class, 'parse_shortcode'));
+            singleton('ShortcodableParser')->register($kw);
         }
     }
 
@@ -39,11 +43,7 @@ class Shortcodable extends SS_Object
         $classList = self::get_shortcodable_classes();
         $classes = array();
         foreach ($classList as $class) {
-            if (singleton($class)->hasMethod('singular_name')) {
-                $classes[$class] = singleton($class)->singular_name();
-            } else {
-                $classes[$class] = $class;
-            }
+            $classes[$class] = singleton($class)->hasMethod('getShortcodeNiceName') ? singleton($class)->getShortcodeNiceName() : (singleton($class)->hasMethod('singular_name') ? singleton($class)->singular_name() : $class);
         }
         return $classes;
     }

@@ -134,7 +134,7 @@ class ShortcodableController extends LeftAndMain
             )->addExtraClass('CompositeField composite cms-content-header nolabel'),
             LiteralField::create('shortcodablefields', '<div class="ss-shortcodable content">'),
             DropdownField::create('ShortcodeType', _t('Shortcodable.SHORTCODETYPE', 'Shortcode type'), $classes, $classname)
-                ->setHasEmptyDefault(true)
+                ->setHasEmptyDefault(true)->setEmptyString('--- select one ---')
                 ->addExtraClass('shortcode-type')
         ));
 
@@ -149,7 +149,7 @@ class ShortcodableController extends LeftAndMain
                 }
                 $fields->push(
                     DropdownField::create('id', $class->singular_name(), $dataObjectSource)
-                        ->setHasEmptyDefault(true)
+                        ->setHasEmptyDefault(true)->setEmptyString('--- select one ---')
                 );
             }
             if (singleton($classname)->hasMethod('getShortcodeFields')) {
@@ -161,6 +161,12 @@ class ShortcodableController extends LeftAndMain
                     );
                 }
             }
+
+            $kw = $classname;
+            if (singleton($classname)->hasMethod('getShortcodeKeyword')) {
+                $kw = singleton($classname)->getShortcodeKeyword();
+            }
+            $fields->push(HiddenField::create('ShortcodeKeyword', '', $kw));
         }
 
         // actions

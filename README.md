@@ -34,7 +34,34 @@ Once installed a new icon will appear in the CMS HTMLEditor toolbar. It looks li
 
 Clicking the toolbar will open a popup that allows you to insert a shortcode into the editor.
 
+
 Highlighting an existing shortcode tag in the editor before clicking the shortcode icon will open the popup to allow editing of the selected shortcode tag.
+
+### Custom shortcode names
+
+You can specify a name that will appear in the modal dropdown when inserting shortcode through TinyMCE.
+Following code would e.g. change the name from *CustomSectionsContentBlock* to *Content block with custom sections*.
+
+```php
+public function getShortcodeNiceName()
+{
+    return 'Content block with custom sections';
+}
+```
+
+You can as well change the actual shortcode (keyword) that will appear in the wysiwyg editor.
+Stick this function into your shortcodable dataobject and the output will look like *[Sections_ContentBlock id=""]*
+
+```php
+public function getShortcodeKeyword()
+{
+    return 'Sections_ContentBlock';
+}
+```
+
+**TODO**: Enable changing this via config YAML files.
+
+## Restricting data object selection
 
 Double clicking a shortcode placeholder in the editor will also open the popup to allow editing of the shortcode.
 
