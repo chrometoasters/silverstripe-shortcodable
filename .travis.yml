@@ -1,36 +1,18 @@
-# See https://github.com/silverstripe-labs/silverstripe-travis-support for setup details
-
-sudo: false
-
 language: php
 
 php:
-  - 5.4
-  - 5.5
-  - 5.6
-  - 7.0
+  - 7.1
+  - 7.2
   - 7.3
 
 env:
-  - DB=MYSQL CORE_RELEASE=3.2
-
-matrix:
-  include:
-    - php: 5.6
-      env: DB=MYSQL CORE_RELEASE=3
-    - php: 5.6
-      env: DB=MYSQL CORE_RELEASE=3.1
-    - php: 5.6
-      env: DB=PGSQL CORE_RELEASE=3.2
-    - php: 7.3
-      env: DB=MYSQL CORE_RELEASE=3.7
+  - DB=MYSQL CORE_RELEASE=3.7
 
 before_script:
-  - composer self-update || true
+  - echo -e "[server]\nmax_allowed_packet=16777216\nwait_timeout=28800" | sudo tee -a /etc/mysql/my.cnf
+  - sudo service mysql restart
   - git clone git://github.com/silverstripe-labs/silverstripe-travis-support.git ~/travis-support
   - php ~/travis-support/travis_setup.php --source `pwd` --target ~/builds/ss
   - cd ~/builds/ss
-  - composer install
 
-script:
-  - vendor/bin/phpunit shortcodable/tests
+script: vendor/bin/phpunit shortcodable/tests
